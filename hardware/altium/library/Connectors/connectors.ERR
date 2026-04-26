@@ -1,0 +1,28 @@
+Altium Designer System: Library Component Rule Check
+PCB File : connectors
+Date     : 4/26/2026
+Time     : 4:56:11 PM
+
+
+Name                Warnings
+------------------------------------------------------------------
+SAMTEC_TSW-108-07-G-D    Duplicate Primitives: Track (-10.16mm,-2.54mm)(-10.16mm,2.54mm) on Mechanical 13 And Track (-10.16mm,-2.54mm)(-10.16mm,2.54mm) on Mechanical 13
+SAMTEC_TSW-108-07-G-D    Duplicate Primitives: Track (-10.16mm,2.54mm)(10.16mm,2.54mm) on Mechanical 13 And Track (-10.16mm,2.54mm)(10.16mm,2.54mm) on Mechanical 13
+SAMTEC_TSW-108-07-G-D    Duplicate Primitives: Track (10.16mm,-2.54mm)(10.16mm,2.54mm) on Mechanical 13 And Track (10.16mm,-2.54mm)(10.16mm,2.54mm) on Mechanical 13
+
+SAMTEC_TSW-110-07-G-D    Duplicate Primitives: Track (-12.7mm,-2.54mm)(-12.7mm,2.54mm) on Mechanical 13 And Track (-12.7mm,-2.54mm)(-12.7mm,2.54mm) on Mechanical 13
+SAMTEC_TSW-110-07-G-D    Duplicate Primitives: Track (-12.7mm,2.54mm)(12.7mm,2.54mm) on Mechanical 13 And Track (-12.7mm,2.54mm)(12.7mm,2.54mm) on Mechanical 13
+SAMTEC_TSW-110-07-G-D    Duplicate Primitives: Track (12.7mm,-2.54mm)(12.7mm,2.54mm) on Mechanical 13 And Track (12.7mm,-2.54mm)(12.7mm,2.54mm) on Mechanical 13
+
+SAMTEC_TSW-115-07-G-D    Duplicate Primitives: Track (19.05mm,-2.54mm)(19.05mm,2.54mm) on Mechanical 13 And Track (19.05mm,-2.54mm)(19.05mm,2.54mm) on Mechanical 13
+SAMTEC_TSW-115-07-G-D    Duplicate Primitives: Track (-19.05mm,2.54mm)(19.05mm,2.54mm) on Mechanical 13 And Track (-19.05mm,2.54mm)(19.05mm,2.54mm) on Mechanical 13
+SAMTEC_TSW-115-07-G-D    Duplicate Primitives: Track (-19.05mm,-2.54mm)(-19.05mm,2.54mm) on Mechanical 13 And Track (-19.05mm,-2.54mm)(-19.05mm,2.54mm) on Mechanical 13
+
+AUDIOJACK_RA_SMT_3P5_TRS_1SWDuplicate Pad Name On Pads Pad Free-(-5.6mm,0mm) on Multi-Layer And Pad Free-(1.4mm,0mm) on Multi-Layer
+AUDIOJACK_RA_SMT_3P5_TRS_1SWMissing Pad Designator on Pad: Pad Free-(1.4mm,0mm) on Multi-Layer
+AUDIOJACK_RA_SMT_3P5_TRS_1SWMissing Pad Designator on Pad: Pad Free-(-5.6mm,0mm) on Multi-Layer
+
+SAMESKY_SJ1-3515-SMT     Duplicate Pad Name On Pads Pad Free-(-3mm,0mm) on Multi-Layer And Pad Free-(3mm,0mm) on Multi-Layer
+SAMESKY_SJ1-3515-SMT     Missing Pad Designator on Pad: Pad Free-(3mm,0mm) on Multi-Layer
+SAMESKY_SJ1-3515-SMT     Missing Pad Designator on Pad: Pad Free-(-3mm,0mm) on Multi-Layer
+
