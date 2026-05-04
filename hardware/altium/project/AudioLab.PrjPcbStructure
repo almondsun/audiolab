@@ -1,6 +1,2 @@
 Record=TopLevelDocument|FileName=AudioLab.SchDoc|SheetNumber=1
 Record=NoMainPathDocument|SourceDocument=AudioLab.SchDoc|FileName=codec.SchDoc|SheetNumber=2
-Record=NoMainPathDocument|SourceDocument=AudioLab.SchDoc|FileName=debug.SchDoc|SheetNumber=3
-Record=NoMainPathDocument|SourceDocument=AudioLab.SchDoc|FileName=io.SchDoc|SheetNumber=4
-Record=NoMainPathDocument|SourceDocument=AudioLab.SchDoc|FileName=nucleo-interface.SchDoc|SheetNumber=5
-Record=NoMainPathDocument|SourceDocument=AudioLab.SchDoc|FileName=power.SchDoc|SheetNumber=6
