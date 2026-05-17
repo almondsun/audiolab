@@ -69,7 +69,7 @@ GenerateClassCluster=0
 DocumentUniqueId=CJXBOFHR
 
 [Document2]
-DocumentPath=codec.SchDoc
+DocumentPath=Codec.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
@@ -103,7 +103,7 @@ GenerateClassCluster=0
 DocumentUniqueId=HEABIQOP
 
 [Document4]
-DocumentPath=sources.SchDoc
+DocumentPath=PowerSupply.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0

@@ -1,3 +1,3 @@
 Record=TopLevelDocument|FileName=AudioLab.SchDoc|SheetNumber=1
-Record=NoMainPathDocument|SourceDocument=AudioLab.SchDoc|FileName=codec.SchDoc|SheetNumber=2
-Record=NoMainPathDocument|SourceDocument=AudioLab.SchDoc|FileName=sources.SchDoc|SheetNumber=3
+Record=SheetSymbol|SourceDocument=AudioLab.SchDoc|Designator=CODEC|SchDesignator=CODEC|FileName=Codec.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=Codec.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=AudioLab.SchDoc|Designator=PS|SchDesignator=PS|FileName=PowerSupply.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=PowerSupply.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
