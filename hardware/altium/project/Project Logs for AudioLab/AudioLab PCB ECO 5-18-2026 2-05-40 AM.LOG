@@ -1,0 +1,5 @@
+Removed Pin From Net: NetName=USB_DP1 Pin=U2-1
+Removed Pin From Net: NetName=USB_DM1 Pin=U2-3
+Added Pin To Net: NetName=USB_DM1 Pin=U2-1
+Added Pin To Net: NetName=USB_DP1 Pin=U2-3
+Added Member To Class: ClassName=PS Member=Component C42 CL21B105KBFNNNE
