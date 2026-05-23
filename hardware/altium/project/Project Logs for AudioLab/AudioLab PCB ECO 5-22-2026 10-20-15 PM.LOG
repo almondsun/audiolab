@@ -1,0 +1,10 @@
+Change Net Name : Old Net Name=BCLK New Net Name=CODEC_BCLK
+Change Net Name : Old Net Name=D_N New Net Name=USB_D_N
+Change Net Name : Old Net Name=D_P New Net Name=USB_D_P
+Change Net Name : Old Net Name=DIN New Net Name=CODEC_DIN
+Change Net Name : Old Net Name=DOUT New Net Name=CODEC_DOUT
+Change Net Name : Old Net Name=I2C_SCL New Net Name=CODEC_I2C_SCL
+Change Net Name : Old Net Name=I2C_SDA New Net Name=CODEC_I2C_SDA
+Change Net Name : Old Net Name=MCLK New Net Name=CODEC_MCLK
+Change Net Name : Old Net Name=RESET_N New Net Name=CODEC_RESET_N
+Change Net Name : Old Net Name=WCLK New Net Name=CODEC_WCLK
