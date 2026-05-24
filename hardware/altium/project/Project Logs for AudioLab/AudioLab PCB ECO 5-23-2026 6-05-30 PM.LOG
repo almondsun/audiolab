@@ -1,0 +1,34 @@
+Removed Pin From Net: NetName=CODEC_RESET_N Pin=TP8-TP
+Removed Pin From Net: NetName=CODEC_I2C_SCL Pin=TP9-TP
+Removed Pin From Net: NetName=CODEC_I2C_SDA Pin=TP10-TP
+Removed Pin From Net: NetName=CODEC_DIN Pin=TP11-TP
+Removed Pin From Net: NetName=CODEC_DOUT Pin=TP12-TP
+Removed Pin From Net: NetName=CODEC_BCLK Pin=TP13-TP
+Removed Pin From Net: NetName=CODEC_WCLK Pin=TP14-TP
+Removed Pin From Net: NetName=CODEC_MCLK Pin=TP15-TP
+Removed Member From Class: ClassName=CODEC Member=TP19
+Removed Member From Class: ClassName=CODEC Member=TP20
+Removed Member From Class: ClassName=CODEC Member=TP21
+Removed Member From Class: ClassName=CODEC Member=TP22
+Removed Member From Class: ClassName=CODEC Member=TP23
+Removed Member From Class: ClassName=CODEC Member=TP24
+Removed Member From Class: ClassName=CODEC Member=TP25
+Removed Member From Class: ClassName=CODEC Member=TP26
+Change Component Designator: OldDesignator=CN7 NewDesignator=CN1
+Change Component Designator: OldDesignator=CN8 NewDesignator=CN2
+Change Component Designator: OldDesignator=CN9 NewDesignator=CN3
+Change Component Designator: OldDesignator=CN10 NewDesignator=CN4
+Change Component Designator: OldDesignator=CN11 NewDesignator=CN5
+Change Component Designator: OldDesignator=CN12 NewDesignator=CN6
+Change Component Designator: OldDesignator=TP16 NewDesignator=TP8
+Change Component Designator: OldDesignator=TP17 NewDesignator=TP9
+Change Component Designator: OldDesignator=TP18 NewDesignator=TP10
+Change Component Designator: OldDesignator=TP19 NewDesignator=TP11
+Change Component Designator: OldDesignator=TP20 NewDesignator=TP12
+Change Component Designator: OldDesignator=TP21 NewDesignator=TP13
+Change Component Designator: OldDesignator=TP22 NewDesignator=TP14
+Change Component Designator: OldDesignator=TP23 NewDesignator=TP15
+Change Component Designator: OldDesignator=TP24 NewDesignator=TP16
+Change Component Designator: OldDesignator=TP25 NewDesignator=TP17
+Change Component Designator: OldDesignator=TP26 NewDesignator=TP18
+Added Member To Class: ClassName=CODEC Member=Component J10 HTSW-102-07-G-S

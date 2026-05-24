@@ -1,0 +1,15 @@
+Removed Pin From Net: NetName=HPROUT Pin=J19-1
+Removed Pin From Net: NetName=GND Pin=J19-3
+Added Pin To Net: NetName=GND Pin=J19-1
+Added Pin To Net: NetName=HPROUT Pin=J19-3
+Added Member To Class: ClassName=CODEC Member=Component TP8 5000
+Added Member To Class: ClassName=CODEC Member=Component TP9 5000
+Added Member To Class: ClassName=CODEC Member=Component TP10 5000
+Added Member To Class: ClassName=CODEC Member=Component TP11 5000
+Added Member To Class: ClassName=CODEC Member=Component TP12 5000
+Added Member To Class: ClassName=CODEC Member=Component TP13 5000
+Added Member To Class: ClassName=CODEC Member=Component TP14 5000
+Added Member To Class: ClassName=CODEC Member=Component TP15 5000
+Added Member To Class: ClassName=CODEC Member=Component TP16 5000
+Added Member To Class: ClassName=CODEC Member=Component TP17 5000
+Added Member To Class: ClassName=CODEC Member=Component TP18 5000
