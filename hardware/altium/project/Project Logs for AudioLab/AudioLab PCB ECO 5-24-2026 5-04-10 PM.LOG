@@ -1,0 +1,12 @@
+Removed Pin From Net: NetName=5V Pin=CN5-05
+Removed Pin From Net: NetName=GND Pin=CN5-07
+Removed Pin From Net: NetName=GND Pin=CN5-19
+Removed Pin From Net: NetName=GND Pin=CN5-20
+Removed Pin From Net: NetName=GND Pin=CN5-21
+Removed Pin From Net: NetName=GND Pin=CN5-50
+Removed Pin From Net: NetName=GND Pin=CN5-59
+Removed Member From Class: ClassName=AudioLab Member=CN5
+Added Component: Designator=CN?(SAMTEC_HTSW-102-XX-X-S)
+Added Pin To Net: NetName=GND Pin=CN?-01
+Added Pin To Net: NetName=5V Pin=CN?-02
+Added Member To Class: ClassName=AudioLab Member=Component CN? HTSW-102-07-G-S

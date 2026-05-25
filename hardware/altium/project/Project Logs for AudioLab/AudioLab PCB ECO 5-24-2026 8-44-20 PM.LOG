@@ -1,0 +1,12 @@
+Change Net Name : Old Net Name=CODEC_IN1LM New Net Name=CODEC_IN1L_N
+Change Net Name : Old Net Name=CODEC_IN1LP New Net Name=CODEC_IN1L_P
+Change Net Name : Old Net Name=CODEC_IN1RM New Net Name=CODEC_IN1R_N
+Change Net Name : Old Net Name=CODEC_IN1RP New Net Name=CODEC_IN1R_P
+Change Net Name : Old Net Name=EXT_IN1LM New Net Name=EXT_IN1L_N
+Change Net Name : Old Net Name=EXT_IN1LP New Net Name=EXT_IN1L_P
+Change Net Name : Old Net Name=EXT_IN1RM New Net Name=EXT_IN1R_N
+Change Net Name : Old Net Name=EXT_IN1RP New Net Name=EXT_IN1R_P
+Added Differential Pair: Name=CODEC_IN1L
+Added Differential Pair: Name=CODEC_IN1R
+Added Differential Pair: Name=EXT_IN1L
+Added Differential Pair: Name=EXT_IN1R

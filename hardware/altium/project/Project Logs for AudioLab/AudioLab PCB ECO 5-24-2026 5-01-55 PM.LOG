@@ -1,0 +1,11 @@
+Removed Pin From Net: NetName=5V Pin=CN5-05
+Removed Pin From Net: NetName=GND Pin=CN5-07
+Removed Pin From Net: NetName=GND Pin=CN5-19
+Removed Pin From Net: NetName=GND Pin=CN5-20
+Removed Pin From Net: NetName=GND Pin=CN5-21
+Removed Pin From Net: NetName=GND Pin=CN5-50
+Removed Pin From Net: NetName=GND Pin=CN5-59
+Change Component Comment : Designator=CN5 Old Comment=SSW-135-01-F-D New Comment=HTSW-102-07-G-S
+Change Component Designator: OldDesignator=CN5 NewDesignator=CN5000
+Added Pin To Net: NetName=GND Pin=CN5000-01
+Added Pin To Net: NetName=5V Pin=CN5000-02

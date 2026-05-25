@@ -1,0 +1,12 @@
+Removed Pin From Net: NetName=GND Pin=CN6-10
+Removed Pin From Net: NetName=USB_D_P Pin=CN6-11
+Removed Pin From Net: NetName=USB_D_N Pin=CN6-13
+Removed Pin From Net: NetName=GND Pin=CN6-19
+Removed Pin From Net: NetName=GND Pin=CN6-40
+Removed Pin From Net: NetName=GND Pin=CN6-53
+Removed Pin From Net: NetName=GND Pin=CN6-64
+Removed Member From Class: ClassName=AudioLab Member=CN6
+Added Component: Designator=CN100(SAMTEC_HTSW-102-XX-X-S)
+Added Pin To Net: NetName=USB_D_N Pin=CN100-01
+Added Pin To Net: NetName=USB_D_P Pin=CN100-02
+Added Member To Class: ClassName=AudioLab Member=Component CN100 HTSW-102-07-G-S

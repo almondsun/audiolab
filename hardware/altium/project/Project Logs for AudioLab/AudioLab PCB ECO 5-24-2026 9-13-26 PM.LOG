@@ -1,0 +1,12 @@
+Change Net Name : Old Net Name=CODEC_LEFT_LOM New Net Name=CODEC_LEFT_LO_N
+Change Net Name : Old Net Name=CODEC_LEFT_LOP New Net Name=CODEC_LEFT_LO_P
+Change Net Name : Old Net Name=CODEC_RIGHT_LOM New Net Name=CODEC_RIGHT_LO_N
+Change Net Name : Old Net Name=CODEC_RIGHT_LOP New Net Name=CODEC_RIGHT_LO_P
+Change Net Name : Old Net Name=LEFT_LOM New Net Name=LEFT_LO_N
+Change Net Name : Old Net Name=LEFT_LOP New Net Name=LEFT_LO_P
+Change Net Name : Old Net Name=RIGHT_LOM New Net Name=RIGHT_LO_N
+Change Net Name : Old Net Name=RIGHT_LOP New Net Name=RIGHT_LO_P
+Added Differential Pair: Name=CODEC_LEFT_LO
+Added Differential Pair: Name=CODEC_RIGHT_LO
+Added Differential Pair: Name=LEFT_LO
+Added Differential Pair: Name=RIGHT_LO

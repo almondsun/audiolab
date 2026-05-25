@@ -1,0 +1,6 @@
+Change Component Designator: OldDesignator=CN? NewDesignator=CN5
+Added Component: Designator=CN?(SAMTEC_HTSW-102-XX-X-S)
+Added Pin To Net: NetName=USB_D_N Pin=CN?-01
+Added Pin To Net: NetName=USB_D_P Pin=CN?-02
+Added Member To Class: ClassName=AudioLab Member=Component CN5 HTSW-102-07-G-S
+Added Member To Class: ClassName=AudioLab Member=Component CN? HTSW-102-07-G-S

@@ -1,0 +1,10 @@
+Removed Pin From Net: NetName=GND Pin=CN4-06
+Removed Pin From Net: NetName=CODEC_RESET_N Pin=CN4-14
+Removed Pin From Net: NetName=GND Pin=CN4-18
+Removed Pin From Net: NetName=GND Pin=CN4-21
+Removed Pin From Net: NetName=GND Pin=CN4-28
+Removed Member From Class: ClassName=AudioLab Member=CN4
+Added Component: Designator=J?(SAMTEC_TSW-108-07-G-D)
+Added Pin To Net: NetName=GND Pin=J?-06
+Added Pin To Net: NetName=CODEC_RESET_N Pin=J?-14
+Added Member To Class: ClassName=AudioLab Member=Component J? TSW-108-07-G-D
