@@ -1,0 +1,13 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [AudioLab.PrjPcb]
+   Generated File[AudioLab-RoundHoles.TXT]
+   Generated File[AudioLab-SlotHoles.TXT]
+   Generated File[AudioLab.LDP]
+   Generated File[AudioLab.DRR]
+
+
+Files Generated   : 4
+Documents Printed : 0
+
+Finished Output Generation At 5:12:13 PM On 5/25/2026
