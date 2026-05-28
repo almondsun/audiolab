@@ -1,7 +1,7 @@
 Protel Design System Design Rule Check
 PCB File : C:\Users\marti\gh\audiolab\hardware\altium\project\AudioLab.PcbDoc
-Date     : 5/25/2026
-Time     : 4:40:34 PM
+Date     : 5/27/2026
+Time     : 8:32:03 PM
 
 Processing Rule : Clearance Constraint (Gap=0.1mm) (InComponent('J22')),(InComponent('J22'))
 Rule Violations :0
