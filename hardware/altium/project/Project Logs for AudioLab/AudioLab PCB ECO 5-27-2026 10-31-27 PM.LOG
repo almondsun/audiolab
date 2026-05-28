@@ -1,0 +1,54 @@
+Change Component Designator: OldDesignator=CN1 NewDesignator=J4
+Change Component Designator: OldDesignator=CN4 NewDesignator=J3
+Change Component Designator: OldDesignator=CN5 NewDesignator=J2
+Change Component Designator: OldDesignator=CN6 NewDesignator=J1
+Change Component Designator: OldDesignator=J1 NewDesignator=J5
+Change Component Designator: OldDesignator=J2 NewDesignator=J6
+Change Component Designator: OldDesignator=J3 NewDesignator=J7
+Change Component Designator: OldDesignator=J4 NewDesignator=J8
+Change Component Designator: OldDesignator=J5 NewDesignator=J9
+Change Component Designator: OldDesignator=J6 NewDesignator=J10
+Change Component Designator: OldDesignator=J7 NewDesignator=J11
+Change Component Designator: OldDesignator=J8 NewDesignator=J12
+Change Component Designator: OldDesignator=J9 NewDesignator=J13
+Change Component Designator: OldDesignator=J10 NewDesignator=J14
+Change Component Designator: OldDesignator=J11 NewDesignator=J15
+Change Component Designator: OldDesignator=J12 NewDesignator=J16
+Change Component Designator: OldDesignator=J13 NewDesignator=J17
+Change Component Designator: OldDesignator=J14 NewDesignator=J18
+Change Component Designator: OldDesignator=J15 NewDesignator=J19
+Change Component Designator: OldDesignator=J16 NewDesignator=J20
+Change Component Designator: OldDesignator=J17 NewDesignator=J21
+Change Component Designator: OldDesignator=J18 NewDesignator=J22
+Change Component Designator: OldDesignator=J19 NewDesignator=J23
+Change Component Designator: OldDesignator=J20 NewDesignator=J24
+Change Component Designator: OldDesignator=J21 NewDesignator=J25
+Change Component Designator: OldDesignator=J22 NewDesignator=J26
+Change Component Description : Designator=S1 Old Description=Slide Switch, EG Series, 4PDT, ON-ON, 4mm Actuator, 200mA DC, 30VDC, R/A PC New Description=Slide Switch, EG Series, 4PDT, ON-ON, 4mm Actuator, 200mA DC, 30VDC, R/A PC | E-Switch EG4208
+Change Component Description : Designator=TP1 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP2 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP3 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP4 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP5 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP6 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP7 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP8 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP9 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP10 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP11 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP12 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP13 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP14 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP15 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP16 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP17 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Component Description : Designator=TP18 Old Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver New Description=Test Point Miniature THM H .300 Nylon 46 Insulated Red PhosBronze/Silver | Keystone Electronics 5000
+Change Net Name : Old Net Name=NetJ1_02 New Net Name=NetJ5_02
+Change Net Name : Old Net Name=NetJ2_10 New Net Name=NetJ6_10
+Change Net Name : Old Net Name=NetJ2_11 New Net Name=NetJ6_11
+Change Net Name : Old Net Name=NetJ5_01 New Net Name=NetJ9_01
+Change Net Name : Old Net Name=NetJ13_1 New Net Name=NetJ17_1
+Change Net Name : Old Net Name=NetJ13_2 New Net Name=NetJ17_2
+Change Net Name : Old Net Name=NetJ13_3 New Net Name=NetJ17_3
+Change Net Name : Old Net Name=NetJ22_A5 New Net Name=NetJ26_A5
+Change Net Name : Old Net Name=NetJ22_B5 New Net Name=NetJ26_B5
