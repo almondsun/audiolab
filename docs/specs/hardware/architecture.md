@@ -9,7 +9,8 @@ input/output paths, the digital control and audio buses, measurement access, and
 the intended Altium design organization.
 
 This document is not a completed schematic review. It defines the architecture
-that the schematic and PCB design shall implement.
+that the schematic and PCB design shall implement and records the current
+committed hardware implementation snapshot.
 
 ## 2. Hardware Scope
 
@@ -35,11 +36,13 @@ The Altium hardware source is organized under `hardware/altium/`:
 ```text
 hardware/altium/
   project/
-    audiolab-dev.PrjPcb
+    AudioLab.PrjPcb
     audiolab.SchDoc
     codec.SchDoc
-    usr_interface.SchDoc
+    PowerSupply.SchDoc
+    AudioLab.BomDoc
     AudioLab.PcbDoc
+    Project Outputs for AudioLab/
   library/
     *.SchLib
     *.PcbLib
@@ -49,8 +52,15 @@ The current project file lists:
 
 - `audiolab.SchDoc`: top-level system schematic;
 - `codec.SchDoc`: codec subsystem schematic;
-- `usr_interface.SchDoc`: user and board-interface schematic;
+- `PowerSupply.SchDoc`: power input, regulation, and rail-distribution schematic;
 - `AudioLab.PcbDoc`: PCB layout document.
+
+The repository also includes exported review artifacts:
+
+- `hardware/docs/schematics.pdf`;
+- `hardware/docs/pcb.pdf`;
+- `hardware/altium/pcb3d.step`;
+- top and bottom board render images under `assets/`.
 
 The library folder shall contain project-owned schematic symbols and PCB
 footprints. Vendor-generated symbols or footprints may be used only after review
@@ -77,6 +87,25 @@ The AudioLab daughterboard supplies the codec-centered mixed-signal hardware.
 The daughterboard shall not depend on undocumented Nucleo behavior. All required
 Nucleo pins, jumpers, and power-source assumptions must be stated in the
 schematic notes or hardware release checklist.
+
+## 4.1 Current Implementation Snapshot
+
+The committed hardware implementation is centered on the TLV320AIC3104 codec
+daughterboard and NUCLEO-F429ZI interface. The exported schematic print dated
+2026-05-27 shows these top-level nets and blocks:
+
+- `NUCLEO-F429ZI` board interface;
+- `CODEC` hierarchical sheet using `codec.SchDoc`;
+- `PS` hierarchical sheet using `PowerSupply.SchDoc`;
+- codec control nets `CODEC_I2C_SCL`, `CODEC_I2C_SDA`, and `CODEC_RESET_N`;
+- codec audio nets `CODEC_MCLK`, `CODEC_BCLK`, `CODEC_WCLK`, `CODEC_DIN`, and
+  `CODEC_DOUT`;
+- target USB nets `USB_D_P` and `USB_D_N`;
+- `5V` and `EXT 5V` power-entry references.
+
+This snapshot is the current hardware source of truth for documentation. The
+allocated DSPLink proof of concept targets a different ADAU1701/TSA1701 audio
+DSP board and shall not override this TLV320AIC3104 hardware contract.
 
 ## 5. Major Hardware Blocks
 

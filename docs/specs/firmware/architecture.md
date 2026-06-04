@@ -12,6 +12,12 @@ file, register value, USB descriptor byte, or codec register setting. Those
 details belong in implementation files and focused design notes once the
 firmware project is created.
 
+The allocated DSPLink proof of concept under `firmware/stm32/` may be used as a
+structure reference for STM32F429ZI state-machine firmware, but it is not yet the
+final AudioLab firmware contract. DSPLink targets an ADAU1701/TSA1701 DSP board
+and Multifunction Shield. AudioLab firmware targets the committed TLV320AIC3104
+codec hardware, USB audio, SAI/I2S transport, and STM32-owned DSP.
+
 ## 2. Firmware Scope
 
 The firmware runs on the STM32F429ZI target on the NUCLEO-F429ZI board.
@@ -465,6 +471,27 @@ Directory roles:
 
 Generated STM32Cube or vendor files shall be kept identifiable and should not be
 hand-edited unless the generation path is documented.
+
+### 12.1 DSPLink Proof-of-Concept Allocation
+
+When cleaning up the allocated DSPLink proof of concept into final AudioLab
+firmware:
+
+- use `firmware/stm32/platformio.ini` as the build-system seed for the
+  `nucleo_f429zi` STM32Cube target;
+- map the DSPLink state-machine style into `app/`, but replace DSPLink presets
+  with AudioLab boot, codec, USB, streaming, DSP, and fault states;
+- reuse I2C timeout and explicit-error discipline from `dsplink_bus`, but
+  replace ADAU1701 16-bit register access with the TLV320AIC3104 page/register
+  control model;
+- reuse UART diagnostics only as an optional debug adapter;
+- keep the Multifunction Shield driver optional and outside the required
+  AudioLab hardware validation path;
+- do not migrate ADAU1701 register constants, SigmaDSP safeload addresses,
+  TSA1701 boot code, or generated `.pio/` outputs.
+
+The complete allocation is documented in
+`docs/specs/system/dsplink-allocation.md`.
 
 ## 13. Build and Configuration Expectations
 

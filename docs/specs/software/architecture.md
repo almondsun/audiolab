@@ -12,6 +12,10 @@ configures, observes, and validates the embedded device; it does not own
 real-time audio transport, codec register timing, DMA, or hardware fault
 recovery.
 
+The allocated DSPLink static browser tuner is a UI prototype only. It targets
+SigmaDSP preset payloads for an ADAU1701/TSA1701 proof of concept and shall not
+be treated as the AudioLab host-control contract.
+
 ## 2. Software Scope
 
 The host-side software runs on a PC connected to the AudioLab device over USB.
@@ -425,6 +429,16 @@ Directory roles:
 
 If a later GUI is added, it should be a separate interface adapter using the same
 application and domain layers.
+
+### 11.1 DSPLink Frontend Allocation
+
+`software/host/ui-prototypes/dsplink-preset-tuner/` may inform a later AudioLab
+UI prototype after the CLI, protocol library, and firmware control contract are
+stable.
+
+It must be rewritten to preview AudioLab codec, DSP, and host-control commands.
+It must not expose SigmaDSP 5.23 mixer coefficients or ADAU1701 safeload payloads
+as AudioLab commands.
 
 ## 12. Testing Strategy
 

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DSPLink Preset Tuner</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="workbench" aria-labelledby="app-title">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">DSPLink</p>
+          <h1 id="app-title">Preset Tuner</h1>
+        </div>
+        <div class="status-strip" aria-live="polite">
+          <span id="active-preset-chip">P0 FLAT</span>
+          <span id="bypass-chip">Output active</span>
+          <span id="dirty-chip">Ready</span>
+        </div>
+      </header>
+
+      <div class="preset-tabs" role="tablist" aria-label="Presets" id="preset-tabs"></div>
+
+      <section class="response-panel" aria-label="Frequency response editor">
+        <div class="panel-heading">
+          <div>
+            <h2 id="preset-title">FLAT</h2>
+            <p id="preset-description">Neutral audio pass-through</p>
+          </div>
+          <div class="toolbar" aria-label="Edit history">
+            <button type="button" id="undo-button" title="Undo (Ctrl+Z)">Undo</button>
+            <button type="button" id="redo-button" title="Redo (Ctrl+Y)">Redo</button>
+            <button type="button" id="reset-button">Reset</button>
+          </div>
+        </div>
+
+        <div class="graph-frame">
+          <canvas id="response-canvas" width="1180" height="560" aria-label="Preset frequency response"></canvas>
+          <div class="graph-readout" id="graph-readout">Drag a band handle</div>
+        </div>
+      </section>
+    </section>
+
+    <aside class="control-rail" aria-label="Preset controls">
+      <section class="rail-section">
+        <div class="section-heading">
+          <h2>Output</h2>
+          <label class="switch">
+            <input type="checkbox" id="bypass-toggle">
+            <span>Bypass</span>
+          </label>
+        </div>
+        <label class="field">
+          <span>Master gain</span>
+          <input type="range" id="master-gain" min="0" max="100" value="100">
+          <output id="master-gain-value">100%</output>
+        </label>
+      </section>
+
+      <section class="rail-section">
+        <div class="section-heading">
+          <h2>Bands</h2>
+          <span class="unit">Gain percent</span>
+        </div>
+        <div id="band-controls" class="band-controls"></div>
+      </section>
+
+      <section class="rail-section">
+        <div class="section-heading">
+          <h2>Firmware Values</h2>
+          <span class="unit">SigmaDSP 5.23</span>
+        </div>
+        <dl class="value-grid">
+          <div>
+            <dt>Master Q23</dt>
+            <dd id="master-q23">8388608</dd>
+          </div>
+          <div>
+            <dt>Mixer 0</dt>
+            <dd id="mixer0-q23">8388608</dd>
+          </div>
+          <div>
+            <dt>Mixer 1</dt>
+            <dd id="mixer1-q23">8388608</dd>
+          </div>
+          <div>
+            <dt>Mixer 2</dt>
+            <dd id="mixer2-q23">8388608</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="rail-section">
+        <div class="section-heading">
+          <h2>Preset Payload</h2>
+          <button type="button" id="copy-button">Copy</button>
+        </div>
+        <pre id="payload-preview" class="payload-preview"></pre>
+      </section>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
