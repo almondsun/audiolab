@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AudioLab Hardware Design Presentation</title>
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --ink: #1f2933;
+      --muted: #5c6670;
+      --line: #d6d1c9;
+      --panel: #ffffff;
+      --accent: #0f6b68;
+      --accent-2: #b75c22;
+      --blue: #203f7a;
+      --good: #236b3b;
+      --shadow: 0 16px 45px rgba(31, 41, 51, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .deck {
+      min-height: 100vh;
+    }
+
+    .slide {
+      display: none;
+      min-height: 100vh;
+      padding: 48px 64px 76px;
+      gap: 28px;
+      align-content: start;
+    }
+
+    .slide.active {
+      display: grid;
+    }
+
+    .slide h1,
+    .slide h2 {
+      margin: 0;
+      letter-spacing: 0;
+      line-height: 1.05;
+    }
+
+    .slide h1 {
+      font-size: 58px;
+      max-width: 980px;
+    }
+
+    .slide h2 {
+      font-size: 42px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 22px;
+      line-height: 1.35;
+      max-width: 980px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 32px;
+      align-items: center;
+    }
+
+    .wide-two-col {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .plain {
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .kicker {
+      color: var(--accent);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .list {
+      display: grid;
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 23px;
+      line-height: 1.28;
+    }
+
+    .list li {
+      position: relative;
+      padding-left: 22px;
+    }
+
+    .list li::before {
+      content: "";
+      position: absolute;
+      top: 0.62em;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .small-list {
+      font-size: 19px;
+      gap: 10px;
+    }
+
+    .formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #17202a;
+      color: #f8fafc;
+      border-radius: 8px;
+      padding: 16px 18px;
+      font-size: 22px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 18px;
+      line-height: 1.25;
+      background: var(--panel);
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .table th,
+    .table td {
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .table th {
+      background: #e8efef;
+      color: #123b3a;
+      font-weight: 800;
+    }
+
+    .image-frame {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .image-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .fit {
+      max-height: 620px;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .board-img {
+      max-height: 650px;
+      object-fit: contain;
+      background: #eee8df;
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: 15px;
+      padding: 10px 12px 12px;
+      border-top: 1px solid var(--line);
+      background: #fbfaf8;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 5px 12px;
+      border: 1px solid #b9c7c5;
+      border-radius: 999px;
+      background: #eef6f5;
+      color: #164b49;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .rail {
+      display: grid;
+      gap: 8px;
+      border-left: 6px solid var(--accent);
+      padding: 12px 0 12px 18px;
+      font-size: 21px;
+      line-height: 1.25;
+    }
+
+    .rail strong {
+      font-size: 27px;
+    }
+
+    .source {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.35;
+      margin-top: 10px;
+    }
+
+    .slide-number {
+      position: fixed;
+      right: 28px;
+      bottom: 20px;
+      color: var(--muted);
+      font-size: 14px;
+      z-index: 10;
+    }
+
+    .nav {
+      position: fixed;
+      left: 28px;
+      bottom: 18px;
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .nav button {
+      border: 1px solid #bdc4c7;
+      background: #fff;
+      color: var(--ink);
+      border-radius: 6px;
+      min-width: 42px;
+      height: 34px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .big-number {
+      font-size: 54px;
+      font-weight: 900;
+      color: var(--accent-2);
+      line-height: 1;
+    }
+
+    .callout {
+      border-left: 8px solid var(--accent-2);
+      background: #fff8f0;
+      padding: 18px 22px;
+      border-radius: 8px;
+      font-size: 23px;
+      line-height: 1.32;
+    }
+
+    .reference-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .reference-grid div {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .slide {
+        display: grid !important;
+        min-height: 0;
+        page-break-after: always;
+        padding: 32px;
+      }
+
+      .nav,
+      .slide-number {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide active">
+      <div class="two-col">
+        <div>
+          <div class="kicker">Finished hardware design</div>
+          <h1>AudioLab Hardware Architecture</h1>
+          <p class="subtitle">A TLV320AIC3104 audio codec daughterboard for STM32-based USB audio and DSP experiments.</p>
+          <div class="tag-row">
+            <span class="tag">NUCLEO-F429ZI</span>
+            <span class="tag">TLV320AIC3104</span>
+            <span class="tag">USB-C Power</span>
+            <span class="tag">I2C + SAI/I2S</span>
+            <span class="tag">Analog I/O</span>
+          </div>
+        </div>
+        <div class="image-frame">
+          <img class="board-img" src="assets/crops/board-above.png" alt="AudioLab PCB top render">
+          <div class="caption">Finished PCB top render from project assets.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Presentation thesis</div>
+        <h2>The board solves the mixed-signal part of the platform</h2>
+      </div>
+      <div class="wide-two-col">
+        <div class="panel">
+          <ul class="list">
+            <li>The STM32/Nucleo side owns USB, firmware control, sample transport, and DSP.</li>
+            <li>The AudioLab board owns codec power, analog input/output, signal conditioning, and measurement access.</li>
+            <li>The hardware is designed for lab bring-up: visible rails, exposed signals, DNP options, and test points.</li>
+          </ul>
+        </div>
+        <div class="image-frame">
+          <img src="assets/crops/top-level-architecture.png" alt="Top-level architecture schematic crop">
+          <div class="caption">Top-level schematic: CODEC sheet, power sheet, NUCLEO-F429ZI interface, USB D+/D-, I2C, SAI/I2S, reset, 5 V.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Completed hardware artifacts</div>
+        <h2>What is already finished</h2>
+      </div>
+      <div class="three-col">
+        <div class="panel">
+          <div class="big-number">01</div>
+          <h3>Design sources</h3>
+          <ul class="list small-list">
+            <li>`AudioLab.PrjPcb`</li>
+            <li>`audiolab.SchDoc`</li>
+            <li>`codec.SchDoc`</li>
+            <li>`PowerSupply.SchDoc`</li>
+            <li>`AudioLab.PcbDoc`</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="big-number">02</div>
+          <h3>Review exports</h3>
+          <ul class="list small-list">
+            <li>`hardware/docs/schematics.pdf`</li>
+            <li>`hardware/docs/pcb.pdf`</li>
+            <li>`hardware/altium/pcb3d.step`</li>
+            <li>Top and bottom board renders</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="big-number">03</div>
+          <h3>Evidence trail</h3>
+          <ul class="list small-list">
+            <li>`AudioLab.BomDoc`</li>
+            <li>Codec datasheet</li>
+            <li>Regulator datasheets</li>
+            <li>Nucleo manual</li>
+            <li>Connector and microphone references</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">System boundary</div>
+        <h2>Hardware architecture</h2>
+      </div>
+      <div class="wide-two-col">
+        <div class="panel">
+          <div class="formula">PC / USB
+  -> NUCLEO-F429ZI
+     -> I2C control
+     -> SAI/I2S audio
+     -> reset / status
+  -> AudioLab codec board
+     -> analog input
+     -> analog output</div>
+          <p class="source">Design decision: keep the STM32 controller board reusable while making a dedicated, inspectable codec daughterboard.</p>
+        </div>
+        <div class="image-frame">
+          <img src="assets/crops/top-level-architecture.png" alt="NUCLEO interface crop">
+          <div class="caption">NUCLEO interface nets are explicit: codec clocks/data, I2C, reset, USB, and 5 V.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Main silicon</div>
+        <h2>Why the TLV320AIC3104 is the center of the board</h2>
+      </div>
+      <div class="two-col">
+        <div class="image-frame">
+          <img src="assets/crops/codec-core.png" alt="Codec core schematic crop">
+          <div class="caption">Codec core: microphone/line inputs, line outputs, headphone outputs, MICBIAS, and HPCOM connection.</div>
+        </div>
+        <div class="panel">
+          <ul class="list">
+            <li>Stereo ADC/DAC codec with configurable analog routing.</li>
+            <li>I2C register control keeps firmware configuration explicit.</li>
+            <li>Audio serial bus supports I2S-style PCM transport to the STM32.</li>
+            <li>Headphone and line-output capability make the board useful for both measurement and listening.</li>
+          </ul>
+          <p class="source">Reference: `hardware/references/tlv320aic3104.pdf`; BOM part `TLV320AIC3104IRHBR`.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Power tree</div>
+        <h2>Voltage rails, current budget, and power dissipation</h2>
+      </div>
+      <div class="wide-two-col">
+        <div class="panel">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Rail</th>
+                <th>Source</th>
+                <th>Main loads</th>
+                <th>Budget point</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>`5V`</td>
+                <td>USB-C VBUS through fuse/filter</td>
+                <td>LDO inputs, board input distribution</td>
+                <td>Must cover both downstream rails plus LDO losses.</td>
+              </tr>
+              <tr>
+                <td>`3V3`</td>
+                <td>TLV75533, 500 mA class LDO</td>
+                <td>Codec `AVDD`, `DRVDD`, `IOVDD`, pullups and support passives</td>
+                <td>Codec analog/driver/I/O currents are in the mA range by mode.</td>
+              </tr>
+              <tr>
+                <td>`1V8`</td>
+                <td>TLV70018, 200 mA class LDO</td>
+                <td>Codec `DVDD` digital core</td>
+                <td>Codec digital current is in the mA range for audio modes.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="source">For LDOs: `Pout = Vout x Iout`, `Pdiss ~= (Vin - Vout) x Iout`. The current budget must be verified during bring-up.</p>
+        </div>
+        <div class="image-frame">
+          <img class="fit" src="assets/crops/power-tree-schematic.png" alt="Power tree schematic crop">
+          <div class="caption">USB-C VBUS enters the board, becomes filtered `5V`, then feeds local `3V3` and `1V8` LDO rails.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Power entry</div>
+        <h2>USB-C input, ESD, fuse, and filtering</h2>
+      </div>
+      <div class="two-col">
+        <div class="image-frame">
+          <img src="assets/crops/usb-power-entry.png" alt="USB power entry schematic crop">
+          <div class="caption">USB4105 USB-C receptacle, 5.1 k&Omega; CC pull-downs, USBLC6-2P6 ESD protection, fuse, ferrite bead, and local capacitors.</div>
+        </div>
+        <div class="panel">
+          <ul class="list">
+            <li>`R17` and `R18` advertise a sink-facing USB-C power role through CC pull-downs.</li>
+            <li>`U2` protects `USB_D_P` and `USB_D_N` against ESD events.</li>
+            <li>`F1` and `FB1` protect and condition the 5 V input path before it becomes the board rail.</li>
+            <li>`C39`, `C40`, and `C41` provide local high-frequency and bulk support for the input rail.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Regulator choices</div>
+        <h2>LDOs favor low noise and simplicity</h2>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="rail">
+            <strong>5 V -> 3.3 V</strong>
+            <span>TLV75533 supplies the codec analog, output-driver, and I/O domains.</span>
+            <span>High-PSRR LDO, 500 mA class, stable with 1 &mu;F ceramic output capacitor.</span>
+          </div>
+          <div class="rail">
+            <strong>5 V -> 1.8 V</strong>
+            <span>TLV70018 supplies the codec digital-core rail.</span>
+            <span>200 mA class LDO, high PSRR, simple local capacitor requirements.</span>
+          </div>
+        </div>
+        <div class="image-frame">
+          <img src="assets/crops/ldo-regulators.png" alt="LDO regulator schematic crop">
+          <div class="caption">Each rail has nearby input/output capacitors and a direct enable-to-input style always-on configuration.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Codec supply integrity</div>
+        <h2>Supply domains are explicit at the codec</h2>
+      </div>
+      <div class="two-col">
+        <div class="image-frame">
+          <img src="assets/crops/codec-supplies-decoupling.png" alt="Codec supplies and decoupling schematic crop">
+          <div class="caption">The schematic exposes codec rails and local decoupling for `AVDD`, `DRVDD`, `IOVDD`, and `DVDD`.</div>
+        </div>
+        <div class="panel">
+          <ul class="list">
+            <li>`AVDD` and `DRVDD` sit on 3.3 V for analog and output drivers.</li>
+            <li>`IOVDD` sits on 3.3 V to match STM32 I/O levels.</li>
+            <li>`DVDD` sits on 1.8 V for the codec digital core.</li>
+            <li>Local 10 &mu;F and 0.1 &mu;F capacitors reduce rail impedance near the codec pins.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Digital boundary</div>
+        <h2>I2C control and SAI/I2S audio are separated</h2>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <ul class="list">
+            <li>I2C: `CODEC_I2C_SCL`, `CODEC_I2C_SDA` with pull-ups to `IOVDD`.</li>
+            <li>Reset: `CODEC_RESET_N` defaults safe through pull network and firmware control.</li>
+            <li>Audio: `MCLK`, `BCLK`, `WCLK`, `DIN`, and `DOUT` form the PCM serial interface.</li>
+            <li>Direction clarity matters: `DIN` and `DOUT` are named from the codec perspective.</li>
+          </ul>
+        </div>
+        <div class="image-frame">
+          <img src="assets/crops/control-clocking-interface.png" alt="Control and clocking schematic crop">
+          <div class="caption">Control, reset, clocking, and serial data nets are grouped on the codec interface block.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Analog input</div>
+        <h2>Input paths support line, external mic, and onboard mic experiments</h2>
+      </div>
+      <div class="image-frame">
+        <img class="fit" src="assets/crops/analog-inputs.png" alt="Analog input schematic crop">
+        <div class="caption">Top row of the codec schematic: LINE2/MIC2, left LINE1/MIC1, right LINE1/MIC1, MICBIAS, internal microphone, coupling caps, DNP tuning positions, and test points.</div>
+      </div>
+      <div class="panel">
+        <ul class="list small-list">
+          <li>Series capacitors AC-couple incoming signals into the codec input pins.</li>
+          <li>DNP capacitors leave room to tune biasing, shunt filtering, or bandwidth after measurement.</li>
+          <li>MICBIAS selection and the onboard electret microphone support microphone-mode demonstration.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Bandwidth design</div>
+        <h2>The RC networks define the practical audio bandwidth</h2>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="formula">Low-pass / high-pass corner:
+
+fc = 1 / (2*pi*R*C)</div>
+          <ul class="list small-list">
+            <li>Input AC coupling removes DC before the codec input path.</li>
+            <li>Line-output RC networks preserve the audio band while reducing out-of-band noise.</li>
+            <li>Headphone coupling capacitors set low-frequency response with the attached load.</li>
+            <li>DNP parts are intentional tuning hooks for measured bandwidth.</li>
+          </ul>
+        </div>
+        <div class="callout">
+          The board bandwidth is not only a codec datasheet number. It is the result of the codec configuration, the selected coupling/filter parts, and the real input/output load.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Line output filtering</div>
+        <h2>100 &Omega; + 47 nF creates a post-codec low-pass pole</h2>
+      </div>
+      <div class="wide-two-col">
+        <div class="panel">
+          <div class="formula">R = 100 &Omega;
+C = 47 nF
+
+fc = 1 / (2*pi*100*47e-9)
+fc ~= 33.9 kHz</div>
+          <ul class="list small-list">
+            <li>Above the 20 kHz audio band.</li>
+            <li>Useful for attenuating higher-frequency noise and measurement artifacts.</li>
+            <li>Test points `TP8`, `TP9`, `TP16`, and `TP17` expose the filtered nodes.</li>
+          </ul>
+        </div>
+        <div class="image-frame">
+          <img src="assets/crops/line-output-filters.png" alt="Line output RC filter schematic crop">
+          <div class="caption">Left and right differential line-output RC networks: `R9/R10/R15/R16 = 100 &Omega;`, `C26/C27/C36/C37 = 47 nF`.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Headphone path</div>
+        <h2>AC coupling and output switching shape the listening path</h2>
+      </div>
+      <div class="wide-two-col">
+        <div class="image-frame">
+          <img src="assets/crops/headphone-output-switching.png" alt="Headphone output and switching schematic crop">
+          <div class="caption">Headphone output uses 220 &mu;F coupling capacitors, optional shunt capacitors, 0 &Omega; links, test points, and an EG4208 switch into the 3.5 mm jack.</div>
+        </div>
+        <div class="panel">
+          <div class="formula">C = 220 &mu;F
+
+16 &Omega; load -> fc ~= 45 Hz
+32 &Omega; load -> fc ~= 23 Hz</div>
+          <ul class="list small-list">
+            <li>The bass response is load-dependent.</li>
+            <li>Large capacitors keep the corner frequency low enough for practical headphone use.</li>
+            <li>The switch/jack path makes output routing demonstrable and inspectable.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">PCB implementation</div>
+        <h2>The layout supports lab use and subsystem visibility</h2>
+      </div>
+      <div class="two-col">
+        <div class="image-frame">
+          <img class="fit" src="assets/crops/pcb-overview.png" alt="PCB overview">
+          <div class="caption">Exported PCB drawing from `hardware/docs/pcb.pdf`.</div>
+        </div>
+        <div class="panel">
+          <ul class="list">
+            <li>Board connectors are placed for Nucleo integration and external access.</li>
+            <li>Audio connectors and test points remain reachable for measurement.</li>
+            <li>Power entry and codec support circuitry are separate functional regions.</li>
+            <li>Reference images and STEP model support mechanical review.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Component choices</div>
+        <h2>BOM-driven hardware story</h2>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Subsystem</th>
+            <th>Parts</th>
+            <th>Design role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Codec</td>
+            <td>TLV320AIC3104IRHBR</td>
+            <td>Audio ADC/DAC, routing, headphone/line output drivers, MICBIAS.</td>
+          </tr>
+          <tr>
+            <td>Power</td>
+            <td>TLV75533PDBVR, TLV70018DDCR, fuse, ferrite bead</td>
+            <td>Low-noise local rails and protected 5 V distribution.</td>
+          </tr>
+          <tr>
+            <td>USB</td>
+            <td>USB4105-GF-A-120, USBLC6-2P6</td>
+            <td>USB-C physical entry and D+/D- ESD protection.</td>
+          </tr>
+          <tr>
+            <td>Analog I/O</td>
+            <td>SJ1-3515-SMT-TR, AOM-4544P-2-R, EG4208</td>
+            <td>Audio jack, electret microphone, and selectable output path.</td>
+          </tr>
+          <tr>
+            <td>Measurement</td>
+            <td>Keystone 5000 test points, DNP footprints, 0 &Omega; links</td>
+            <td>Bring-up access, configurable paths, and measurement hooks.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source">Source: `hardware/altium/project/AudioLab.BomDoc` and `hardware/references/`.</p>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Design tradeoffs</div>
+        <h2>Why the hardware is defensible</h2>
+      </div>
+      <div class="three-col">
+        <div class="panel">
+          <h3>Noise vs efficiency</h3>
+          <ul class="list small-list">
+            <li>LDOs waste more power than buck regulators.</li>
+            <li>For this codec board, low-noise simplicity is the better first revision choice.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Flexibility vs area</h3>
+          <ul class="list small-list">
+            <li>DNP parts, 0 &Omega; links, and test points consume area.</li>
+            <li>They make bring-up and bandwidth tuning far safer.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Architecture vs coupling</h3>
+          <ul class="list small-list">
+            <li>Nucleo remains the controller and firmware platform.</li>
+            <li>The daughterboard keeps mixed-signal responsibility local and reviewable.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Bring-up plan</div>
+        <h2>How to validate the finished hardware</h2>
+      </div>
+      <div class="panel">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Check</th>
+              <th>Evidence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Visual inspection, shorts, connector orientation</td><td>Board photos, continuity checks</td></tr>
+            <tr><td>2</td><td>Apply current-limited 5 V</td><td>Input current and fuse/filter behavior</td></tr>
+            <tr><td>3</td><td>Measure `3V3` and `1V8`</td><td>Rail voltages and regulator temperature</td></tr>
+            <tr><td>4</td><td>Verify reset and I2C</td><td>Codec ACK, register read/write</td></tr>
+            <tr><td>5</td><td>Verify `MCLK`, `BCLK`, `WCLK`</td><td>Oscilloscope frequency and duty behavior</td></tr>
+            <tr><td>6</td><td>Measure analog bandwidth</td><td>Line/headphone response against RC design</td></tr>
+            <tr><td>7</td><td>Run playback/capture loopback</td><td>Audio path and noise measurements</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div>
+        <div class="kicker">Reference-backed claims</div>
+        <h2>Primary sources used</h2>
+      </div>
+      <div class="reference-grid">
+        <div><strong>TLV320AIC3104 datasheet</strong><br>Codec supplies, I2C control, serial audio bus, analog I/O, current examples.</div>
+        <div><strong>TLV755P datasheet</strong><br>3.3 V LDO capability, PSRR, dropout, capacitor guidance.</div>
+        <div><strong>TLV700 datasheet</strong><br>1.8 V LDO capability, PSRR, dropout, capacitor guidance.</div>
+        <div><strong>STM32 Nucleo-144 manual</strong><br>NUCLEO-F429ZI connectors, 3.3 V I/O, USB OTG/device behavior.</div>
+        <div><strong>USB4105 and USBLC6 references</strong><br>USB-C connector and USB data-line protection context.</div>
+        <div><strong>SJ1 audio jack, AOM microphone, EG switch</strong><br>Mechanical and analog interface component context.</div>
+      </div>
+      <p class="source">All files are under `hardware/references/`; component list is in `hardware/altium/project/AudioLab.BomDoc`.</p>
+    </section>
+
+    <section class="slide">
+      <div class="two-col">
+        <div>
+          <div class="kicker">Close</div>
+          <h2>AudioLab is ready as the hardware base for firmware and DSP</h2>
+          <p class="subtitle">The finished design establishes the power rails, codec interface, analog bandwidth shaping, USB/protection path, PCB layout, and measurement hooks needed for the next phase.</p>
+          <div class="callout">The central hardware result: a reviewable, testable TLV320AIC3104 mixed-signal board that turns the NUCLEO-F429ZI into an audio/DSP platform.</div>
+        </div>
+        <div class="image-frame">
+          <img class="board-img" src="assets/crops/board-below.png" alt="AudioLab PCB bottom render">
+          <div class="caption">Finished PCB bottom render from project assets.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="nav">
+    <button id="prev" type="button" aria-label="Previous slide">&larr;</button>
+    <button id="next" type="button" aria-label="Next slide">&rarr;</button>
+  </div>
+  <div class="slide-number" id="slideNumber"></div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const slideNumber = document.getElementById("slideNumber");
+    let index = 0;
+
+    function showSlide(nextIndex) {
+      index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle("active", slideIndex === index);
+      });
+      slideNumber.textContent = `${index + 1} / ${slides.length}`;
+    }
+
+    document.getElementById("prev").addEventListener("click", () => showSlide(index - 1));
+    document.getElementById("next").addEventListener("click", () => showSlide(index + 1));
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
+        event.preventDefault();
+        showSlide(index + 1);
+      }
+      if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        event.preventDefault();
+        showSlide(index - 1);
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        showSlide(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        showSlide(slides.length - 1);
+      }
+    });
+
+    showSlide(0);
+  </script>
+</body>
+</html>
+
