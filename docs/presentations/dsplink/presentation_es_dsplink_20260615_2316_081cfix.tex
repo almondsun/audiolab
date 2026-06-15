@@ -1,0 +1,819 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamercolor{structure}{fg=black}
+\setbeamercolor{frametitle}{fg=black,bg=gray!10}
+\setbeamercolor{title}{fg=black}
+\setbeamersize{text margin left=8mm,text margin right=8mm}
+
+\definecolor{railblue}{HTML}{2F5D8C}
+\definecolor{railgreen}{HTML}{3A7D44}
+\definecolor{railorange}{HTML}{A55A20}
+\definecolor{railgray}{HTML}{F2F2F2}
+\definecolor{railred}{HTML}{A83A32}
+
+\newcommand{\smallsource}[1]{\par\vspace{0.6mm}{\tiny\raggedright Fuente: #1\par}}
+\newcommand{\imagecaption}[1]{\par\vspace{1mm}{\small\bfseries #1\par}}
+\newcommand{\tightlist}{\setlength{\itemsep}{2pt}\setlength{\parskip}{0pt}}
+\newcommand{\blockbox}[2]{%
+  \fcolorbox{black!45}{gray!8}{\parbox[c][18mm][c]{\dimexpr#1-2\fboxsep-2\fboxrule\relax}{\centering\footnotesize #2}}%
+}
+\newcommand{\smallblockbox}[2]{%
+  \fcolorbox{black!40}{gray!8}{\parbox[c][13mm][c]{\dimexpr#1-2\fboxsep-2\fboxrule\relax}{\centering\scriptsize #2}}%
+}
+
+\title[DSPLink]{DSPLink}
+\subtitle{Controlador embebido STM32 para un DSP de audio ADAU1701/TSA1701}
+\author{Martín Ramírez Espinosa}
+\institute{maramirezes@unal.edu.co}
+\date{15 de junio de 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \vspace{10mm}
+  \begin{center}
+    {\fontsize{30}{34}\selectfont\bfseries DSPLink}
+
+    \vspace{5mm}
+    {\Large Controlador embebido STM32 para un DSP de audio ADAU1701/TSA1701}
+
+    \vspace{11mm}
+    {\large Martín Ramírez Espinosa}
+
+    \vspace{2mm}
+    {\normalsize maramirezes@unal.edu.co}
+
+    \vspace{8mm}
+    {\normalsize 15 de junio de 2026}
+
+    \vspace{8mm}
+    {\small NUCLEO-F429ZI + Multifunction Shield + TSA1701 Audio DSP Board.}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Intención del Proyecto}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.55\textwidth}
+      \textbf{DSPLink} implementa un controlador autónomo para una tarjeta de audio basada en ADAU1701/TSA1701.
+
+      \vspace{2mm}
+      \begin{itemize}\tightlist
+        \item Evita depender de un programador conectado al PC durante la operación normal.
+        \item El STM32 inicializa el sistema, configura el DSP y cambia presets en tiempo de ejecución.
+        \item La ruta de audio queda en el DSP; el microcontrolador gobierna la ruta de control.
+        \item La interfaz local usa botones, LEDs, display, buzzer y potenciómetro.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{assets/tsa1701_board.jpg}
+      \smallsource{\texttt{docs/reference/dsplink/TSA1701-5.jpg}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Arquitectura de Bloques}
+  \centering
+  \begin{tabular}{>{\centering\arraybackslash}m{0.23\textwidth} c >{\centering\arraybackslash}m{0.27\textwidth} c >{\centering\arraybackslash}m{0.27\textwidth}}
+    \blockbox{\linewidth}{\textbf{Multifunction Shield}\\botones, LEDs, display\\potenciómetro y buzzer} &
+    $\Longleftrightarrow$ &
+    \blockbox{\linewidth}{\textbf{NUCLEO-F429ZI}\\estado, bus, presets\\debug UART y control} &
+    $\Longleftrightarrow$ &
+    \blockbox{\linewidth}{\textbf{TSA1701 / ADAU1701}\\memoria de programa\\parámetros y DSP de audio}
+  \end{tabular}
+
+  \vspace{5mm}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.32\textwidth}
+      \textbf{Interfaz local}
+      \begin{itemize}\tightlist
+        \item Selección de preset.
+        \item Indicación de estado y error.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \textbf{Plano de control}
+      \begin{itemize}\tightlist
+        \item I2C/SPI, GPIO, ADC y UART.
+        \item Secuencia de arranque y diagnóstico.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \textbf{Plano de audio}
+      \begin{itemize}\tightlist
+        \item Audio analógico entra al DSP.
+        \item El ADAU1701 procesa en tiempo real.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \smallsource{\texttt{firmware/stm32/README.md}, arquitectura del sistema}
+\end{frame}
+
+
+\begin{frame}{Criterio de Diseño: Trazabilidad Completa}
+  \small
+  \centering
+  \begin{tabular}{>{\centering\arraybackslash}m{0.125\textwidth} c >{\centering\arraybackslash}m{0.125\textwidth} c >{\centering\arraybackslash}m{0.125\textwidth} c >{\centering\arraybackslash}m{0.125\textwidth} c >{\centering\arraybackslash}m{0.125\textwidth} c >{\centering\arraybackslash}m{0.125\textwidth}}
+    \smallblockbox{\linewidth}{Problema\\y alcance} & $\rightarrow$ &
+    \smallblockbox{\linewidth}{Req.\\verificables} & $\rightarrow$ &
+    \smallblockbox{\linewidth}{FSM\\eventos} & $\rightarrow$ &
+    \smallblockbox{\linewidth}{Firmware\\módulos} & $\rightarrow$ &
+    \smallblockbox{\linewidth}{Drivers\\señales} & $\rightarrow$ &
+    \smallblockbox{\linewidth}{Evidencia\\de prueba}
+  \end{tabular}
+
+  \vspace{4mm}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+      \textbf{Recorrido de arriba hacia abajo}
+      \begin{itemize}\tightlist
+        \item Del propósito de DSPLink al comportamiento observable.
+        \item De cada requisito a estados, eventos y acciones.
+        \item De cada acción al módulo y periférico que la implementa.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Recorrido de abajo hacia arriba}
+      \begin{itemize}\tightlist
+        \item Una señal física debe producir un evento nombrado.
+        \item El evento debe cambiar o confirmar un estado de la FSM.
+        \item La salida observable debe validar un requisito concreto.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \smallsource{Criterio adaptado de \texttt{Project\_CE\_2026\_1}: problema $\leftrightarrow$ pines, señales y evidencia.}
+\end{frame}
+
+
+\begin{frame}{Requerimientos Verificables del MVP}
+  \scriptsize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{>{\bfseries}p{0.11\textwidth} p{0.40\textwidth} p{0.40\textwidth}}
+    \toprule
+    Req. & El sistema debe... & Criterio de aceptación \\
+    \midrule
+    REQ-01 & inicializar la ruta de control STM32--DSP. & Se cumple si UART reporta boot exitoso o un error nombrado de bus/configuración. \\
+    REQ-02 & aplicar al menos un preset de audio sobre el ADAU1701/TSA1701. & Se cumple si el cambio de preset aparece en display/LEDs y queda registrado por UART. \\
+    REQ-03 & separar la ruta de audio de la ruta de control. & Se cumple si el audio permanece en el DSP y el STM32 solo escribe control, presets y parámetros. \\
+    REQ-04 & reaccionar ante entradas del Multifunction Shield. & Se cumple si botones y potenciómetro generan eventos de FSM documentados. \\
+    REQ-05 & entrar a estado seguro ante falla de comunicación. & Se cumple si un NACK/timeout lleva a \texttt{ERROR}, muestra código y evita una escritura parcial no reportada. \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{2.5mm}
+  \smallblockbox{0.90\textwidth}{Un requisito útil puede fallar: por eso cada uno se amarra a una observación, medición o log.}
+  \smallsource{Formato de requerimientos y criterios de aceptación adaptado de \texttt{Project\_CE\_2026\_1}.}
+\end{frame}
+
+\begin{frame}{Referencia de Hardware: Tarjeta DSP}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.55\textwidth}
+      \centering
+      \includegraphics[height=0.68\textheight,width=\linewidth,keepaspectratio]{assets/tsa1701_board.jpg}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \textbf{Señales de interés}
+      \begin{itemize}\tightlist
+        \item Entrada de audio y dos salidas de audio.
+        \item Puerto de control TinySine AMP Sub.
+        \item Puerto de programación.
+        \item Potenciómetros externos: gain, bass, midrange y treble.
+        \item Alimentación por entrada DC o USB.
+      \end{itemize}
+      \smallsource{\texttt{docs/reference/dsplink/TSA1701-5.jpg}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Referencia de Hardware: ADAU1701}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.60\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{assets/adau1701_functional_block_clean.png}
+      \imagecaption{Diagrama funcional}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \small
+      \textbf{Lo que aporta al proyecto}
+      \begin{itemize}\tightlist
+        \item Núcleo de procesamiento de audio de 28/56 bits.
+        \item ADCs, DACs y matriz GPIO integrados.
+        \item Interfaz de control I2C/SPI y mecanismo de self-boot.
+        \item Separación natural entre datos de audio y comandos de configuración.
+      \end{itemize}
+      \smallsource{\texttt{docs/reference/dsplink/ADAU1701.pdf}, diagrama funcional}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Ruta de Audio vs Ruta de Control}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.60\textwidth}
+      \centering
+      \includegraphics[height=0.72\textheight,width=\linewidth,keepaspectratio]{assets/adau1701_system_block_clean.png}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \small
+      \textbf{Separación crítica}
+      \begin{itemize}\tightlist
+        \item La señal de audio no pasa por el bucle principal del STM32.
+        \item El STM32 escribe registros, programa y parámetros.
+        \item Los cambios de preset se traducen en valores seguros para el DSP.
+        \item Los errores de bus deben reportarse y dejar el sistema en estado conocido.
+      \end{itemize}
+      \smallsource{\texttt{docs/reference/dsplink/ADAU1701.pdf}, diagrama de sistema}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{Self-Boot y Programación: Referencia AN-923}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.54\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.56\textheight,keepaspectratio]{assets/an923_selfboot_pc_connected.png}
+      \imagecaption{Circuito self-boot con PC conectado}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \small
+      \textbf{Por qué importa para DSPLink}
+      \begin{itemize}\tightlist
+        \item El ADAU1701 puede arrancar como maestro I2C desde EEPROM.
+        \item SigmaStudio/PC puede programar la EEPROM en el mismo bus.
+        \item Las señales \texttt{SELFBOOT}, \texttt{WP}, \texttt{SDA}, \texttt{SCL} y \texttt{RESET} definen el modo de operación.
+        \item DSPLink reinterpreta esta arquitectura: el STM32 asume control de arranque, diagnóstico y cambios de parámetros en runtime.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{1mm}
+  \smallblockbox{0.93\textwidth}{Mensaje técnico: DSPLink no solo ``habla I2C''; se ubica entre programación, self-boot, control en runtime y validación observable.}
+  \smallsource{Analog Devices AN-923, Figure 2: \textit{Self-Boot Circuit with PC Connected}.}
+
+\end{frame}
+
+\begin{frame}{Imagen Self-Boot Exportada: Uso en Firmware}
+  \scriptsize
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.47\textwidth}
+      \textbf{Lo que aporta AN-923}
+      \begin{itemize}\tightlist
+        \item La EEPROM contiene programa, parámetros y registros.
+        \item En self-boot, el ADAU1701 lee esa imagen al salir de reset.
+        \item En DSPLink, el STM32 puede cargar una imagen equivalente por bus.
+      \end{itemize}
+      \vspace{2mm}
+      \smallblockbox{0.92\linewidth}{La idea clave para exponer: DSPLink convierte la imagen de SigmaStudio en una secuencia controlada, verificable y reportable desde firmware.}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \textbf{Parser implementado en \texttt{dsplink\_boot.c}}
+      \renewcommand{\arraystretch}{1.18}
+      \begin{tabular}{p{0.23\linewidth} p{0.61\linewidth}}
+        \toprule
+        Comando & Acción \\
+        \midrule
+        \texttt{0x00 END} & terminar imagen \\
+        \texttt{0x01 WRITE} & leer longitud, dirección y escribir bloque \\
+        \texttt{0x02 DELAY} & esperar antes de seguir \\
+        \texttt{0x03 NOOP} & no operación \\
+        \texttt{0x04..0x06} & writeback / espera especial \\
+        error & abortar boot y reportar falla \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+  \end{columns}
+  \vspace{2mm}
+  \centering
+  \smallblockbox{0.88\textwidth}{Flujo: \texttt{tsa1701\_default\_firmware[]} $\rightarrow$ parser de comandos $\rightarrow$ \texttt{dsplink\_bus\_adau1701\_write\_block()} $\rightarrow$ verificación por readback/log.}
+  \smallsource{AN-923 para self-boot; inspección de \texttt{dsplink\_boot.c} y \texttt{tsa1701\_default\_firmware.c}.}
+\end{frame}
+
+\begin{frame}{I2C del ADAU1701: Direcciones y Formato de Operación}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.46\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{assets/adau1701_i2c_address_tables.png}
+      \imagecaption{Byte de dirección y direcciones 0x68--0x6F}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{assets/adau1701_i2c_read_write_formats.png}
+      \imagecaption{Single-word y burst read/write}
+    \end{column}
+  \end{columns}
+  \vspace{1mm}
+  \scriptsize
+  \textbf{Contrato de firmware:} \texttt{chip address + R/W} $\rightarrow$ subdirección alta $\rightarrow$ subdirección baja $\rightarrow$ bytes de datos; cada transacción debe terminar en ACK/timeout/error explícito.
+  \smallsource{Analog Devices ADAU1701 Data Sheet, I2C port, Tables 15--16 and Figures 22--25.}
+\end{frame}
+
+\begin{frame}{I2C del ADAU1701: Temporización de Write y Read}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.66\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.73\textheight,keepaspectratio]{assets/adau1701_i2c_clocking.png}
+    \end{column}
+    \begin{column}{0.30\textwidth}
+      \small
+      \textbf{Qué debe defender DSPLink}
+      \begin{itemize}\tightlist
+        \item \textbf{Write:} dirección de chip, subdirección y datos.
+        \item \textbf{Read:} write de subdirección, repeated start, lectura.
+        \item ACK del esclavo y ACK/NACK del maestro definen continuidad o cierre.
+        \item El bus layer debe detectar NACK, stop inesperado y timeout.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \smallsource{Analog Devices ADAU1701 Data Sheet, Figures 20--21.}
+\end{frame}
+
+\begin{frame}{Interfaz Local: Multifunction Shield}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.62\textwidth}
+      \centering
+      \includegraphics[height=0.72\textheight,width=\linewidth,keepaspectratio]{assets/multifunction_shield_schematic_clean.png}
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \small
+      \textbf{Uso en DSPLink}
+      \begin{itemize}\tightlist
+        \item S1/S2/S3: navegación, selección y bypass.
+        \item A0: control analógico de parámetro.
+        \item LEDs: estado de boot, DSP configurado, preset activo y error.
+        \item Display de 7 segmentos: preset, valor o código de error.
+      \end{itemize}
+      \smallsource{\texttt{docs/reference/dsplink/Multifunction-Shield.pdf}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{Controles Físicos: GPIO, ADC y Debounce}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.60\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.69\textheight,keepaspectratio]{assets/an951_gpio_modes_top.png}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \small
+      \textbf{Lectura para DSPLink}
+      \begin{itemize}\tightlist
+        \item Botón $\rightarrow$ evento discreto con rebote controlado.
+        \item Potenciómetro $\rightarrow$ control analógico de volumen, ganancia o filtro.
+        \item LED/display/buzzer $\rightarrow$ evidencia visible del estado.
+        \item La interfaz local debe producir eventos de FSM, no escrituras dispersas.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \smallsource{Analog Devices AN-951, hardware controls with SigmaDSP GPIO pins.}
+\end{frame}
+
+\begin{frame}{Controlador: NUCLEO-F429ZI}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.45\textwidth}
+      \centering
+      \includegraphics[height=0.66\textheight,width=\linewidth,keepaspectratio]{assets/nucleo_f429zi_board_clean.png}
+    \end{column}
+    \begin{column}{0.51\textwidth}
+      \textbf{Responsabilidades del STM32F429ZI}
+      \begin{itemize}\tightlist
+        \item Inicialización HAL, relojes y periféricos.
+        \item Control de GPIO, I2C/SPI, UART, ADC, timers e interrupciones.
+        \item Máquina de estados de arranque y operación.
+        \item Capa de bus y control de presets.
+        \item Consola UART para diagnóstico y depuración.
+      \end{itemize}
+      \smallsource{\texttt{docs/reference/dsplink/nucleo-f429zi.pdf} y \texttt{firmware/stm32/README.md}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Arquitectura de Firmware}
+  \footnotesize
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.50\textwidth}
+      \textbf{Módulos principales}
+      \begin{itemize}\tightlist
+        \item \texttt{main.c}: arranque, periféricos y lazo principal.
+        \item \texttt{dsplink\_state}: estado global, preset activo y errores.
+        \item \texttt{dsplink\_boot}: condición inicial, carga y preset por defecto.
+        \item \texttt{dsplink\_bus}: I2C/SPI, bloques, timeouts y logging.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \textbf{Capas de aplicación}
+      \begin{itemize}\tightlist
+        \item \texttt{dsplink\_presets}: modos de audio y API limpia.
+        \item \texttt{dsplink\_params}: conversión a parámetros DSP y safeload.
+        \item \texttt{mfs}: botones, potenciómetro, LEDs, display y buzzer.
+        \item \texttt{uart\_debug}: mensajes, errores y comandos simples.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{3mm}
+  \centering
+  \smallblockbox{0.88\textwidth}{Idea de diseño: la lógica de aplicación no debe escribir directamente al bus; debe pasar por APIs de estado, presets y parámetros.}
+  \smallsource{\texttt{firmware/stm32/src/}, \texttt{firmware/stm32/include/} y \texttt{firmware/stm32/README.md}}
+
+\end{frame}
+
+\begin{frame}{Prototipo Implementado: Boot y Supervisor}
+  \scriptsize
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.47\textwidth}
+      \textbf{Arranque real en \texttt{main.c}}
+      \begin{enumerate}\setlength{\itemsep}{2pt}
+        \item Inicializa reloj, \texttt{SysTick}, UART y MFS.
+        \item Inicializa I2C1 en PB8/PB9.
+        \item Ejecuta \texttt{dsplink\_boot\_tsa1701()}.
+        \item Escanea el bus y valida lectura de registros.
+        \item Carga imagen self-boot exportada.
+        \item Configura DAC/Core y verifica por readback.
+      \end{enumerate}
+      \vspace{1mm}
+      \smallblockbox{0.92\linewidth}{El boot no se acepta por suposición: se acepta por detección, escritura, lectura y log UART.}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \textbf{Supervisor de runtime}
+      \renewcommand{\arraystretch}{1.15}
+      \begin{tabular}{p{0.34\linewidth} p{0.54\linewidth}}
+        \toprule
+        Fuente & Acción de software \\
+        \midrule
+        Botones MFS & \texttt{mfs\_poll\_buttons()} $\rightarrow$ evento UI \\
+        Estado & \texttt{dsplink\_state\_apply\_event()} $\rightarrow$ preset/bypass \\
+        Pot A0 cada 80 ms & lectura ADC $\rightarrow$ porcentaje con histéresis \\
+        Cambio válido & \texttt{apply\_dsp\_controls()} $\rightarrow$ safeload \\
+        Cada 1 s & reporte UART de preset, parámetro y estado DSP \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+  \end{columns}
+  \smallsource{Inspección de \texttt{firmware/stm32/src/main.c}, \texttt{dsplink\_boot.c} y \texttt{dsplink\_bus.c}.}
+\end{frame}
+
+\begin{frame}{Prototipo Implementado: Estado, UI y Parámetros}
+  \scriptsize
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+      \textbf{FSM de usuario implementada}
+      \begin{tabular}{p{0.28\linewidth} p{0.58\linewidth}}
+        \toprule
+        Evento & Efecto \\
+        \midrule
+        \texttt{PREVIOUS} & preset anterior y salida de bypass \\
+        \texttt{NEXT} & preset siguiente módulo \texttt{COUNT} \\
+        \texttt{TOGGLE\_BYPASS} & alterna compuerta de salida \\
+        Potenciómetro & \texttt{raw 0..4095} $\rightarrow$ \texttt{0..100\%} \\
+        Histéresis & ignora cambios menores a 3\% \\
+        \bottomrule
+      \end{tabular}
+      \vspace{2mm}
+      \textbf{Evidencia local}\vspace{1mm}
+      \begin{itemize}\tightlist
+        \item Display: \texttt{P0..P4}, \texttt{BP}, \texttt{Gxx} o \texttt{Er}.
+        \item LEDs: running, ready, preset y error.
+        \item Buzzer: confirmación corta de boot/evento.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Parámetros DSP implementados}
+      \begin{enumerate}\setlength{\itemsep}{2pt}
+        \item Preset elige perfil de mezcla: \texttt{FLAT}, \texttt{BASS}, \texttt{VOICE}, \texttt{NIGHT}, \texttt{FILTER}.
+        \item Ganancia de usuario se convierte a formato SigmaDSP \texttt{5.23}.
+        \item Tres rutas de mezcla se multiplican por la ganancia global.
+        \item Se escriben direcciones de parámetro \texttt{87..92} usando safeload.
+        \item El resultado queda registrado por UART para validar el cambio.
+      \end{enumerate}
+      \vspace{1mm}
+      \smallblockbox{0.92\linewidth}{Esto conecta UI física $\rightarrow$ evento $\rightarrow$ estado $\rightarrow$ coeficiente DSP $\rightarrow$ evidencia UART/display.}
+    \end{column}
+  \end{columns}
+  \smallsource{Inspección de \texttt{dsplink\_state.c/.h}, \texttt{dsplink\_params.c/.h}, \texttt{dsplink\_presets.c} y \texttt{mfs.c}.}
+\end{frame}
+
+\begin{frame}{Secuencia de Arranque}
+  \centering
+  \begin{tabular}{>{\centering\arraybackslash}m{0.18\textwidth} c >{\centering\arraybackslash}m{0.18\textwidth} c >{\centering\arraybackslash}m{0.18\textwidth} c >{\centering\arraybackslash}m{0.18\textwidth}}
+    \smallblockbox{\linewidth}{\textbf{RESET}\\estado conocido} & $\Rightarrow$ &
+    \smallblockbox{\linewidth}{\textbf{BUS}\\I2C/SPI y GPIO} & $\Rightarrow$ &
+    \smallblockbox{\linewidth}{\textbf{DSP LOAD}\\programa y parámetros} & $\Rightarrow$ &
+    \smallblockbox{\linewidth}{\textbf{RUN}\\preset y control local}
+  \end{tabular}
+
+  \vspace{5mm}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+      \textbf{Durante boot}
+      \begin{itemize}\tightlist
+        \item Verificar presencia del DSP.
+        \item Cargar configuración exportada.
+        \item Aplicar parámetros iniciales.
+        \item Mostrar progreso por LEDs/display/UART.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{En falla}
+      \begin{itemize}\tightlist
+        \item Nombrar el código de error.
+        \item Evitar estados ambiguos.
+        \item Mantener salida segura.
+        \item Permitir diagnóstico por UART.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \smallsource{\texttt{dsplink\_boot.c}, \texttt{dsplink\_state.c} y \texttt{docs/specs/system/dsplink-allocation.md}}
+\end{frame}
+
+
+
+
+\begin{frame}{FSM Formal: Estados, Eventos y Acciones}
+  \small
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.45\textwidth}
+      \textbf{Modelo de trabajo}
+      \[
+        M = (S,E,A,\delta,s_0)
+      \]
+      \vspace{-1mm}
+      \begin{itemize}\tightlist
+        \item $S$: estados persistentes.
+        \item $E$: eventos físicos, temporales o de bus.
+        \item $A$: acciones sobre módulos, drivers o reportes.
+        \item $\delta$: estado + evento + condición $\rightarrow$ nuevo estado.
+        \item $s_0=\texttt{INIT}$.
+      \end{itemize}
+      \vspace{1mm}
+      \scriptsize
+      \textbf{Estados:} \texttt{INIT, BUS, BOOT, READY, PRESET, PARAM, ERROR}\\
+      \textbf{Eventos:} \texttt{power, bus\_ok, boot\_ok, button, pot, bus\_err}
+    \end{column}
+    \begin{column}{0.51\textwidth}
+      \textbf{Tabla de transición mínima}
+      \vspace{1mm}
+
+      \scriptsize
+      \renewcommand{\arraystretch}{1.25}
+      \begin{tabular}{llll}
+        \toprule
+        Estado & Evento & Acción & Siguiente \\
+        \midrule
+        INIT & power & init & BUS \\
+        BUS & bus\_ok & scan & BOOT \\
+        BOOT & boot\_ok & load & READY \\
+        READY & button & preset & PRESET \\
+        PRESET & pot & param & PARAM \\
+        * & bus\_err & fault & ERROR \\
+        \bottomrule
+      \end{tabular}
+
+      \vspace{4mm}
+      \smallblockbox{0.90\linewidth}{La FSM no replica cada línea de código: resume comportamiento observable, eventos y decisiones.}
+    \end{column}
+  \end{columns}
+  \smallsource{FSM construida desde \texttt{dsplink\_state}, \texttt{dsplink\_boot}, \texttt{dsplink\_bus}, \texttt{dsplink\_presets} y \texttt{Project\_CE\_2026\_1}.}
+\end{frame}
+
+\begin{frame}{Máquina de Estados: Boot y Runtime}
+  \centering
+  \includegraphics[width=0.98\textwidth,height=0.78\textheight,keepaspectratio]{assets/dsplink_fsm_slide.png}
+  \smallsource{FSM conceptual a partir de \texttt{main.c}, \texttt{dsplink\_boot.c}, \texttt{dsplink\_state.c}, \texttt{dsplink\_params.c} y \texttt{dsplink\_presets.c}}
+\end{frame}
+
+
+\begin{frame}{Trazabilidad: Señal Física a Evidencia}
+  \scriptsize
+  \centering
+  \renewcommand{\arraystretch}{1.26}
+  \begin{tabular}{p{0.15\textwidth} p{0.17\textwidth} p{0.13\textwidth} p{0.22\textwidth} p{0.21\textwidth}}
+    \toprule
+    \textbf{Señal} & \textbf{Driver/módulo} & \textbf{Evento} & \textbf{Transición} & \textbf{Evidencia} \\
+    \midrule
+    S1/S2 & MFS / GPIO & button & READY $\rightarrow$ PRESET & LED, display, UART \\
+    A0 & MFS / ADC & pot & PRESET $\rightarrow$ PARAM & valor + payload \\
+    I2C NACK & bus.c & bus\_err & * $\rightarrow$ ERROR & log diagnóstico \\
+    Reset DSP & boot / GPIO & rst\_done & INIT $\rightarrow$ BUS & patrón de boot \\
+    UART TX & uart.c & report & acción observable & terminal serial \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{4mm}
+  \smallblockbox{0.88\textwidth}{Frase de defensa: esta señal produce este evento, cambia este estado, ejecuta esta acción y valida este requisito.}
+  \smallsource{Estructura de trazabilidad adaptada de \texttt{Project\_CE\_2026\_1}.}
+\end{frame}
+
+
+
+\begin{frame}{Registros Relevantes para DSPLink}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.50\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.49\textheight,keepaspectratio]{assets/adau1701_safeload_rows_focus.png}
+      \vspace{1mm}
+      \smallblockbox{0.95\linewidth}{0x0810--0x0814 almacenan los datos safeload; 0x0815--0x0819 almacenan la dirección destino.}
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.40\textheight,keepaspectratio]{assets/adau1701_dsp_core_081c_focus.png}
+      \vspace{1mm}
+      {\scriptsize
+      \renewcommand{\arraystretch}{1.05}
+      \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.20\linewidth} >{\raggedright\arraybackslash}p{0.70\linewidth}@{}}
+        \toprule
+        \textbf{Bit} & \textbf{Uso para DSPLink} \\
+        \midrule
+        IST & Inicia la transferencia safeload hacia RAM. \\
+        SR[1:0] & Selecciona tasa de muestreo e instrucciones. \\
+        ADM/DAM & Mute de ADC/DAC. \\
+        CR & Permite el paso de señal por el núcleo DSP. \\
+        \bottomrule
+      \end{tabular}}
+
+    \end{column}
+  \end{columns}
+  \vspace{0.5mm}
+  {\tiny \textbf{Decisión de diseño:} encapsular estos registros en \texttt{dsplink\_params} y \texttt{dsplink\_bus}; evitar números mágicos.}
+  \smallsource{Analog Devices ADAU1701 Data Sheet, control register map and DSPLink README.}
+\end{frame}
+
+\begin{frame}{Safeload: Actualización Coherente de Parámetros}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.50\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.41\textheight,keepaspectratio]{assets/adau1701_safeload_steps_text.png}
+      \vspace{1mm}
+      \includegraphics[width=0.85\linewidth,height=0.22\textheight,keepaspectratio]{assets/adau1701_safeload_mapping.png}
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \small
+      \textbf{Flujo de runtime}
+      \begin{enumerate}\tightlist
+        \item Validar valor de usuario: ganancia, banda o bypass.
+        \item Convertir a formato SigmaDSP 5.23/28-bit cuando aplique.
+        \item Escribir \texttt{Safeload Address} con la dirección destino.
+        \item Escribir \texttt{Safeload Data} con el dato nuevo.
+        \item Activar transferencia desde \texttt{DSP Core Control}.
+      \end{enumerate}
+      \vspace{2mm}
+      \smallblockbox{0.95\linewidth}{Objetivo: cambiar parámetros audibles sin detener el audio y sin exponer mezclas intermedias inestables.}
+    \end{column}
+  \end{columns}
+  \smallsource{Analog Devices ADAU1701 Data Sheet, Safeload Data/Address Registers.}
+\end{frame}
+
+\begin{frame}{Control de Presets y Parámetros}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+      \textbf{Presets de audio}
+      \begin{itemize}\tightlist
+        \item Bypass o paso directo.
+        \item Volumen maestro.
+        \item Ecualización por bandas.
+        \item Refuerzo de graves o voz.
+        \item Compresor/limitador cuando aplique.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Conversión técnica}
+      \begin{itemize}\tightlist
+        \item Valores de usuario $\rightarrow$ coeficientes SigmaDSP.
+        \item Rangos validados antes de escribir al DSP.
+        \item Safeload para evitar parámetros parcialmente aplicados.
+        \item Payload visible para depuración y trazabilidad.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{4mm}
+  \blockbox{0.90\textwidth}{El preset no es solo una etiqueta de UI: es un contrato entre estado del usuario, parámetros validados, direcciones del DSP y una transacción de bus observable.}
+  \smallsource{\texttt{dsplink\_presets.c}, \texttt{dsplink\_params.c} y \texttt{software/host/ui-prototypes/dsplink-preset-tuner/}}
+\end{frame}
+
+\begin{frame}{UI Host: Prototipo de Tuner}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.52\textwidth}
+      \textbf{Qué demuestra}
+      \begin{itemize}\tightlist
+        \item Una pestaña por preset de firmware.
+        \item Editor de respuesta en frecuencia con manejadores low/mid/high.
+        \item Ganancia maestra, bypass y controles por banda.
+        \item Vista previa del payload que termina en el contrato de parámetros.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \textbf{Límite de alcance}
+      \begin{itemize}\tightlist
+        \item Es un prototipo estático de navegador.
+        \item No reemplaza una CLI o protocolo estable.
+        \item Debe migrarse solo cuando el firmware tenga contrato de control firme.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{4mm}
+  \smallblockbox{0.90\textwidth}{Valor del prototipo: hace visible la traducción usuario $\rightarrow$ parámetro DSP antes de fijarla en firmware.}
+  \smallsource{\texttt{software/host/ui-prototypes/dsplink-preset-tuner/README.md} y \texttt{firmware/stm32/README.md}}
+\end{frame}
+
+
+\begin{frame}{Características de Audio: Evidencia de Referencia}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.60\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.67\textheight,keepaspectratio]{assets/adau1701_performance_graphs.png}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \small
+      \textbf{Uso en la presentación}
+      \begin{itemize}\tightlist
+        \item Justifica el DSP dedicado como ruta de audio en tiempo real.
+        \item Distingue prestaciones de ADC/DAC frente a control de firmware.
+        \item Sugiere pruebas futuras: respuesta de filtro, ruido, THD+N y validación auditiva/medida.
+        \item No reemplaza una medición propia del montaje: es referencia del componente.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \smallsource{Analog Devices ADAU1701 Data Sheet, Typical Performance Characteristics.}
+\end{frame}
+
+\begin{frame}{Estado Actual y Alcance}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+      \textbf{Avances consolidados}
+      \begin{itemize}\tightlist
+        \item Estructura PlatformIO para NUCLEO-F429ZI.
+        \item Fuentes y cabeceras separadas por responsabilidad.
+        \item Evidencia de arquitectura de estado, bus, boot, presets y UI local.
+        \item Referencias técnicas del DSP, placa Nucleo y shield.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Límites explícitos}
+      \begin{itemize}\tightlist
+        \item DSPLink no es el firmware final de AudioLab.
+        \item Usa ADAU1701/TSA1701, no TLV320AIC3104.
+        \item El audio en tiempo real vive en el DSP externo, no en el STM32.
+        \item El MFS es interfaz de demostración, no contrato universal.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{4mm}
+  \blockbox{0.90\textwidth}{Conclusión técnica: DSPLink valida una arquitectura de control embebido para DSP externo, con estado observable, errores nombrados y separación entre audio y control.}
+  \smallsource{\texttt{docs/specs/system/dsplink-allocation.md}}
+\end{frame}
+
+\begin{frame}{Plan de Validación del MVP}
+  \scriptsize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{>{\bfseries}p{0.10\textwidth} p{0.20\textwidth} p{0.32\textwidth} p{0.28\textwidth}}
+    \toprule
+    Prueba & Objetivo & Procedimiento mínimo & Evidencia esperada \\
+    \midrule
+    TEST-01 & Boot y bus & Alimentar, abrir UART y ejecutar arranque. & READY o error nombrado. \\
+    TEST-02 & Preset & Presionar S1/S2/S3 en READY. & Display/LED + reporte UART. \\
+    TEST-03 & Parámetro & Girar A0 con preset activo. & Valor validado + payload. \\
+    TEST-04 & Falla & Forzar NACK o timeout de bus. & ERROR + salida segura. \\
+    TEST-05 & Audio/control & Cambiar parámetro mientras reproduce audio. & Audio en DSP; STM32 reporta control. \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{4mm}
+  \smallblockbox{0.92\textwidth}{Criterio de cierre: requisito probado con evidencia; FSM conectada a señales reales; fallas reportadas, no ocultas.}
+
+  \vspace{2mm}
+  \begin{center}
+    \footnotesize MVP mínimo: entrada física o bus $\rightarrow$ evento $\rightarrow$ transición FSM $\rightarrow$ salida observable.
+  \end{center}
+  \smallsource{Plan alineado con \texttt{firmware/stm32/README.md}, \texttt{docs/reference/dsplink/} y \texttt{Project\_CE\_2026\_1}.}
+\end{frame}
+
+\begin{frame}{Referencias}
+  \scriptsize
+  \begin{itemize}\tightlist
+    \item Repositorio local: \texttt{firmware/stm32/README.md}, \texttt{firmware/stm32/src/}, \texttt{firmware/stm32/include/}.
+    \item Asignación y límites: \texttt{docs/specs/system/dsplink-allocation.md}.
+    \item Analog Devices, \textit{ADAU1701 SigmaDSP 28-/56-Bit Audio Processor}: \texttt{docs/reference/dsplink/ADAU1701.pdf}.
+    \item Analog Devices AN-923, \textit{Designing a System Using the ADAU1701/ADAU1702 in Self-Boot Mode}: \texttt{docs/reference/dsplink/an-923.pdf}.
+    \item Analog Devices AN-951, \textit{Using Hardware Controls with SigmaDSP GPIO Pins}: \texttt{docs/reference/dsplink/an-951.pdf}.
+    \item STMicroelectronics, \textit{NUCLEO-F429ZI / Nucleo-144}: \texttt{docs/reference/dsplink/nucleo-f429zi.pdf}.
+    \item Multifunction Shield schematic: \texttt{docs/reference/dsplink/Multifunction-Shield.pdf}.
+    \item TinySine/TSA1701 reference image: \texttt{docs/reference/dsplink/TSA1701-5.jpg}.
+    \item UI prototype: \texttt{software/host/ui-prototypes/dsplink-preset-tuner/}.
+  \end{itemize}
+\end{frame}
+
+\end{document}
